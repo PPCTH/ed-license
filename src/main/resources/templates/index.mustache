@@ -1,0 +1,63 @@
+{{>layout/html-header}}
+<link rel="stylesheet" href="/css/index.css"> 
+<script src="/js/index.js"></script>
+
+
+<section id="search-wrp" class="jumbotron text-center">
+	<div class="container">		
+		<div class="tab-content">
+			<div role="tabpanel" id="id-search-tab" class="tab-pane fade show active">
+				<form role="form" action="search" method="post" id="id-search-form" autocomplete="off">
+					<div class="form-group">
+						<input type="text" name="id" class="form-control" >
+					</div>			 	
+					<div class="form-row">
+						<div class="form-group col-sm-4">
+					 		<button type="button" class="btn-change-search btn btn-outline-primary btn-block">Map</button>
+					 	</div>
+					 	<div class="form-group col-sm-8">
+					 		<button type="submit" id="btn-submit-id-search" class="btn btn-primary btn-block">Search</button>
+				 		</div>
+					</div>			 	
+				 	
+				</form>
+			</div>
+			
+			<div role="tabpanel" id="map-search-tab" class="tab-pane fade">
+				<form role="form" id="map-search-form">
+					<div class="form-row">
+						<div class="form-group col-sm">
+							<input type="text" class="form-control">
+						</div>
+						<div class="form-group col-sm">
+							<input type="text" class="form-control">
+						</div>
+						<div class="form-group col-sm">
+							<input type="text" class="form-control">
+						</div>
+					</div>		
+					<div class="form-row">
+						<div class="form-group col-sm-4">
+					 		<button type="button" class="btn-change-search btn btn-outline-primary btn-block">ID</button>
+					 	</div>
+					 	<div class="form-group col-sm-8">
+					 		<button type="submit" id="btn-submit-map-search" class="btn btn-primary btn-block">Search</button>
+				 		</div>
+					</div>
+			 	</form>
+			</div>
+		</div>
+	</div>
+</section>
+
+
+	
+
+<section id="result-wrp" class="jumbotron text-center">
+	<div class="container">		
+		
+	</div>
+</section>
+
+
+{{>layout/html-footer}}
