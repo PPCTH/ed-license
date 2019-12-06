@@ -1,5 +1,7 @@
 package com.pccth.edlicense.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,8 +24,8 @@ public class MainController {
 	
 	@PostMapping("/search")
 	@ResponseBody
-	public String search(@RequestBody SearchId searchId) {
-		System.out.println("A : " + searchId.getId() );
-		return "THIS POST ID: " + searchId.getId();
+	public ResponseEntity<?> search(@RequestBody SearchId searchId) {
+		return ResponseEntity.status(HttpStatus.OK)
+		        .body("");
 	}
 }

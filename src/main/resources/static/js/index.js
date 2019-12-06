@@ -18,13 +18,16 @@ $(document).ready(function(){
 			url: form.action,
 			method: form.method,
 			dataType : 'json',
-			data: {
+			contentType: 'application/json',
+			data: JSON.stringify({
 				id : form.id.value
-			},
-			success: function(res){
-				console.log("------------res---------------")
-				console.log(res)
-			}
+			}),
+			success: function (res) {
+                console.log(res);
+            },
+            error: function (data, textStatus, xhr) {
+                console.log(data.responseText);
+            }
 		})
 		return false;
 	})
