@@ -1,5 +1,7 @@
 package com.pccth.edlicense.model;
 
+import java.util.Optional;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -20,6 +22,10 @@ public class Bussiness extends Audit{
     private Long id;
 	
 	@NotNull
+    @Column(unique = true)
+	private String name;
+	
+	@NotNull
 	private boolean status = false;
 	
 	@ManyToOne(
@@ -29,6 +35,13 @@ public class Bussiness extends Audit{
     		name = "owner_id", 
     		nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
 	private Owner owner;
+
+	@Override
+	public String toString() {
+		
+		return "Bussiness Name: " + this.name 
+				+ " status " + this.isStatus() 
+				+ " hase owner " + this.owner.getName();
+	};
 }
