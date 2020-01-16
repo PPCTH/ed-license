@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
@@ -46,41 +47,45 @@ public class MainController {
 		
 		
 		model.addAttribute("title", "Welcome to ED License Trace");
-		return "index";
+		return "index/index";
 	}
 	
-	@PostMapping("/search/{id}")
+	@PostMapping("/search/{searchParam}")
 	@ResponseBody
-	public ResponseEntity<?> search(@PathVariable Long id) {
+	public ResponseEntity<?> searchBussiness(@PathVariable String searchParam, @RequestParam(name = "page", defaultValue  = "0") Integer pageParam) {
 		
-//		Map data = new HashMap<>();
 		Gson gson = new Gson();
+		Map res = new HashMap<>();
+		PageRequest page = PageRequest.of(pageParam, Integer.MAX_VALUE); //Integer.MAX_VALUE
 		
-		Owner owner = ownerRepo.findById(id).orElseGet(() -> {
-			return new Owner(0L, "No Have Request Data.");
-		});
+		Page<Bussiness> pageBussiness = bussRepo.findBussinessByKeyWord(searchParam, page);
 		
-		PageRequest page = PageRequest.of(0, Integer.MAX_VALUE);
-		Page<Bussiness> pageBuss = bussRepo.findByOwnerId(owner.getId(), page);
-		List<List> bussinessList = pageBuss.stream().map(temp ->{
+		List<List> bussinessList = pageBussiness.stream().map(temp ->{
 			return new ArrayList<>(
 					Arrays.asList(
 							temp.getOwner().getName(), 
-							temp.getId(),
 							temp.getName(),
-							temp.isStatus()));
-			/*
-			 * obj.put("owner", temp.getOwner().getName());
-			 * obj.put("status",temp.isStatus()); obj.put("name", temp.getName());
-			 * obj.put("id", temp.getId());
-			 */
+							temp.getStatus(),
+							temp.getId()
+							));
 		}).collect(Collectors.toList());
 		
-		/*
-		 * data.put("name", owner.getName()); data.put("bussiness",bussinessList);
-		 */
+		res.put("recordsTotal", pageBussiness.getTotalElements());
+		res.put("data", bussinessList);
+		return ResponseEntity.status(HttpStatus.OK)
+		        .body(gson.toJson(res));
+	}
+	
+	@GetMapping("/search/bussiness_detail/{id}")
+	@ResponseBody
+	public ResponseEntity<?> searchBussinessDetail(@PathVariable Long id){
+		Bussiness bussiness = bussRepo.getOne(id);
+		Gson gson = new Gson();
+		
+		
+		System.out.println("GET BUSSINESS: "+ bussiness);
 		
 		return ResponseEntity.status(HttpStatus.OK)
-		        .body(gson.toJson(bussinessList));
+		        .body(gson.toJson(bussiness.getDetail()));
 	}
 }
