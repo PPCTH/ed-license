@@ -1,4 +1,4 @@
-.table-responsive-md::-webkit-scrollbar-track,
+.table-responsive-sm::-webkit-scrollbar-track,
 #bussiness-info-wrp::-webkit-scrollbar-track
 {
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
@@ -6,14 +6,14 @@
 	background-color: #F5F5F5;
 }
 
-.table-responsive-md::-webkit-scrollbar,
+.table-responsive-sm::-webkit-scrollbar,
 #bussiness-info-wrp::-webkit-scrollbar
 {
 	width: 4px;
 	background-color: #F5F5F5;
 }
 
-.table-responsive-md::-webkit-scrollbar-thumb,
+.table-responsive-sm::-webkit-scrollbar-thumb,
 #bussiness-info-wrp::-webkit-scrollbar-thumb
 {
 	border-radius: 10px;

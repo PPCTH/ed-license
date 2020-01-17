@@ -42,7 +42,7 @@ $(document).ready(function(){
 function renderTable(data){
 	const table = $("#result-id-table");
 	const dataTable = table.DataTable({
-		dom: "<'table-responsive-md'tp",
+		dom: "<'table-responsive-sm'tp",
 		retrieve: true,
 		ordering: false,
 //		paging: false,
@@ -84,7 +84,6 @@ function renderSearchModal(bussiness_id){
 }
 
 function renderModal(data){
-//	console.log(data)
 	let now = new Date();
 	let endDate = new Date(data.bussiness_license_end);
 	let statusColor = now.getTime() < endDate.getTime()? "#00c853": "#d50000"

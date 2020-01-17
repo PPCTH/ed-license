@@ -47,6 +47,7 @@ public class MainController {
 		
 		
 		model.addAttribute("title", "Welcome to ED License Trace");
+		model.addAttribute("MAPAPIKEY","GuVsoKRAt7o)xA1LSWniH)DlvEGcxykYY1r8jEYYFzXhEOaKXnEkIWVJYbkvnB1PXIwvsn3qO0JvTnbu0LSYoO0=====2");
 		return "index/index";
 	}
 	
