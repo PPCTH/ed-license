@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -27,19 +28,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
-import com.pccth.edlicense.data.SearchId;
 import com.pccth.edlicense.model.Bussiness;
 import com.pccth.edlicense.model.Owner;
 import com.pccth.edlicense.repository.BussinessRepository;
-import com.pccth.edlicense.repository.OwnerRepository;
 
 
 @Controller
 public class MainController {
-
-	@Autowired
-	OwnerRepository ownerRepo;
-	@Autowired
+	
+	
+	@Autowired 
 	BussinessRepository bussRepo;
 	
 	@GetMapping("")
@@ -54,27 +52,32 @@ public class MainController {
 	@PostMapping("/search/{searchParam}")
 	@ResponseBody
 	public ResponseEntity<?> searchBussiness(@PathVariable String searchParam, @RequestParam(name = "page", defaultValue  = "0") Integer pageParam) {
-		
-		Gson gson = new Gson();
-		Map res = new HashMap<>();
+
 		PageRequest page = PageRequest.of(pageParam, Integer.MAX_VALUE); //Integer.MAX_VALUE
 		
-		Page<Bussiness> pageBussiness = bussRepo.findBussinessByKeyWord(searchParam, page);
+		Page<Bussiness> pageBussiness = bussRepo.findBussinessByKeyWordSort(searchParam, page);
+		HashMap<String, List<Map>> owner = new HashMap<String, List<Map>>();
 		
-		List<List> bussinessList = pageBussiness.stream().map(temp ->{
-			return new ArrayList<>(
-					Arrays.asList(
-							temp.getOwner().getName(), 
-							temp.getName(),
-							temp.getStatus(),
-							temp.getId()
-							));
-		}).collect(Collectors.toList());
-		
-		res.put("recordsTotal", pageBussiness.getTotalElements());
-		res.put("data", bussinessList);
-		return ResponseEntity.status(HttpStatus.OK)
-		        .body(gson.toJson(res));
+		List<Bussiness> listBussiness = pageBussiness.getContent();
+		for( Bussiness temp: listBussiness) {
+			String ownerName = temp.getOwner().getName();
+			Map<String, String> map = new HashMap<String, String>() {{
+										put("bussiness_id",temp.getId().toString());
+										put("bussiness_name", temp.getName());
+										put("bussiness_status", temp.getStatus());
+										put("bussiness_isAviable",temp.isAvaiable().toString());
+									}};
+			if(!owner.containsKey(ownerName)) {
+				List<Map> list = new ArrayList<Map>(){{
+									add(map);
+								}};
+				owner.put(ownerName, list);
+			}else {
+				owner.get(ownerName).add(map);
+			}
+		}
+			
+		return ResponseEntity.status(HttpStatus.OK).body(new TreeMap(owner));
 	}
 	
 	@GetMapping("/search/bussiness_detail/{id}")
@@ -82,9 +85,6 @@ public class MainController {
 	public ResponseEntity<?> searchBussinessDetail(@PathVariable Long id){
 		Bussiness bussiness = bussRepo.getOne(id);
 		Gson gson = new Gson();
-		
-		
-		System.out.println("GET BUSSINESS: "+ bussiness);
 		
 		return ResponseEntity.status(HttpStatus.OK)
 		        .body(gson.toJson(bussiness.getDetail()));

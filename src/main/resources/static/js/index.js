@@ -1,31 +1,22 @@
 $(document).ready(function(){
-	const idSearchURL = "search";
 	const idSearchForm = $("#id-search-form");
 	const changeFormBtn = $(".btn-change-search");
-	$.fn.dataTable.ext.classes.sPageButton = 'page-item paginate_button blue lighten-2 wave-effect';
+	//$.fn.dataTable.ext.classes.sPageButton = 'page-item paginate_button blue lighten-2 wave-effect';
 	
-	/*Pace.on('hide', function(){
-	      console.log('done');
-	    });*/
 	
-	changeFormBtn.on("click",function() {
-		let current = $(this).parents(".tab-pane");
-		$(current).removeClass("active show")
-				.siblings().tab("show");
-	})
-	
-	idSearchForm.on("submit", function(){
-		let form = this;
-		let url = form.action + "/" + form.id.value;
+	idSearchForm.find("i").on("click", function(){
+		let value = idSearchForm.find("input").val();
+		let url = "search/" + value;
 		Pace.track(function(){
 			$.ajax({
 				url: url,
-				method: form.method,
+				method: 'POST',
 				async: true,
 				dataType : 'json',
 				contentType: 'application/json',
 				success: function (res) {
-					renderTable(res);
+					renderResult(res);
+					//renderTable(res);
 	            },
 	            error: function (data, textStatus, xhr) {
 	                console.log(data.responseText);
@@ -35,31 +26,40 @@ $(document).ready(function(){
 		return false;
 	})
 	
-	
-	
+	const inpOffsetTop = idSearchForm.find("input").offset().top;
+	window.onscroll = function(){stickyHeaderSearch(idSearchForm, inpOffsetTop)};
 })
 
-function renderTable(data){
-	const table = $("#result-id-table");
-	const dataTable = table.DataTable({
-		dom: "<'table-responsive-sm'tp",
-		retrieve: true,
-		ordering: false,
-//		paging: false,
-		pagingType: "numbers", 
-		pageLength: 5,
-		column:[
-			{title: "Owner Name"},
-			{title: "Bussiness Name"},
-			{title: "Status"}
-		],
-	}).clear().rows.add(data.data).draw(true);
+function renderResult(data){
+	const resultContainer = $("#result-wrp");
+	resultContainer.empty();
 	
-	
-	table.find("tbody").on("click","tr",function(){
-		var rowData = dataTable.row( this ).data();
-		renderSearchModal(rowData[rowData.length-1])
+	$.each(data, function(i, v){
+		resultContainer.append(createCollection(i, v))
 	})
+	
+	$(".detail").on("click", function(){
+		let bussinessId = $(this).data("id")
+		renderSearchModal(bussinessId)
+	})
+}
+
+function createCollection(title, list){
+	let listEl = "";
+	$.each(list,function(i, v){
+		let wave = v['bussiness_isAviable'] == "true"? 'waves-green': 'waves-red';
+		let el = "<a href='#!' data-id='" + v['bussiness_id'] + "' class='waves-effect " + wave + " collection-item detail'>" +
+					"<li>" + 
+						"<span class='title black-text'>" + v['bussiness_name'] + "</span>" + 
+						"<p class='grey-text mb-0'>" + v['bussiness_status'] + "</p>" +
+					"</li>" +
+				"</a>"
+		listEl += el;
+	})
+	let headerEl = "<li class='collection-header h3'>" + title + "</li>";
+	let collectionEl = "<ul class='collection with-header'>" + headerEl + listEl + "</ul>";
+	
+	return collectionEl;	
 }
 
 function renderSearchModal(bussiness_id){
@@ -110,4 +110,13 @@ function renderModal(data){
 	})
 	
 	modal.modal("open");
+}
+
+function stickyHeaderSearch(el, elTop){
+	if(window.pageYOffset > elTop){
+		el.addClass("sticky")
+	}else{
+		el.removeClass("sticky")
+	}
+		
 }

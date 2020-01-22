@@ -71,12 +71,12 @@ public class Bussiness extends Audit{
 	@NotNull
 	public ProductType productType;
 	
-	public Boolean isStatus() {
+	public Boolean isAvaiable() {
 		Date today = new Date();
 		return today.before(this.getEndLicenseDate());
 	}
 	public String getStatus() {
-		return this.isStatus()? "Aviable":"Expired"; 
+		return this.isAvaiable()? "Aviable":"Expired"; 
 		
 	}
 	
@@ -97,7 +97,7 @@ public class Bussiness extends Audit{
 	@Override
 	public String toString() {
 		return "Bussiness Name: " + this.name 
-				+ " status " + this.isStatus() 
+				+ " status " + this.isAvaiable() 
 				+ " hase owner " + this.owner.getName();
 	};
 }
