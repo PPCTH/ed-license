@@ -1,0 +1,142 @@
+/*
+ * Base structure
+ */
+
+html,
+body {
+  height: 100%;
+  font-size: 1rem !important;
+}
+
+body {
+  display: -ms-flexbox;
+  display: flex;
+}
+
+a:hover,
+.nav-extended a:hover{
+	/* 
+	* override
+	* a:hover -> bootstrap/sccss/_renoot.scss 
+	*
+	*/
+	/* color: inherit !important; */
+	text-decoration: none !important;
+}
+
+.form-control{
+	/*
+	* override
+	* input[type=*] -> materialzecss
+	*
+	*/
+    display: block !important;
+    width: 100% !important;
+    height: 34px !important;
+    padding: 0 0.75rem !important;
+    font-size: 14px !important;
+    line-height: 1.42857143 !important;
+    color: #555 !important;
+    background-color: #fff !important;
+    background-image: none !important;
+    border: 1px solid #ccc !important;
+    border-radius: 4px !important;
+    box-sizing: border-box !important;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075) !important;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075) !important;
+    -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s !important;
+    -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s !important;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s !important;
+}
+.form-control:focus{
+	/*
+	* override
+	* input[type=*]:focus -> materialzecss
+	*
+	*/
+	color: #495057 !important;
+    background-color: #fff !important;
+    border-color: #26a69a !important;
+    outline: 0 !important;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25) !important;	
+}
+
+.modal{
+	/* 
+	* override
+	* .modal -> bootstrap/scss/_modal.scss 
+	* .modal -> materialize.min.css
+	*
+	*/
+	height: auto !important;
+	max-height: 80% !important;
+}
+.modal-content{
+	/* 
+	* override
+	* .modal-content -> bootstrap/scss/_modal.scss 
+	*
+	*/
+    background-color: inherit !important;
+    border: none !important;
+    border-radius: 0 !important;
+}
+
+.page-item.active .page-link{
+	/* 
+	* override
+	* .page-item.active .page-link -> bootstrap/scss/_pagination.scss 
+	*
+	*/
+    background-color: inherit !important;
+    border-color: inherit !important;
+}
+
+.pagination{
+	/* 
+	* override
+	* .pagination li -> materialzecss
+	*
+	*/
+	display: unset !important;
+}
+.page-item .page-link,
+.pagination li{
+	/* 
+	* override
+	* .page-item:first-child .page-link -> bootstrap/scss/_pagination.scss 
+	* .page-item:last-child .page-link -> bootstrap/scss/_pagination.scss 
+	* .pagination li -> materialzecss
+	*
+	*/
+    border-radius: 5px !important;
+}
+.pagination li{
+	/* 
+	* add
+	* .pagination li -> materialzecss
+	*
+	*/
+	margin: 0 1px;
+}
+
+.page-footer{
+	/* 
+	* override
+	* .page-footer -> materialzecss
+	*
+	*/
+	padding-top: 0 !important;
+    /*position: fixed;
+    bottom: 0;
+    width: 100%; */
+}
+
+#nostra_maps_logo_Logo_0{
+	/* 
+	* override
+	* .logo -> nostraAPI/V2.0/nostra/maps/logo/css/logo.css
+	*
+	*/
+	display: none;
+}
