@@ -97,7 +97,8 @@ public class Bussiness extends Audit{
 	@Override
 	public String toString() {
 		return "Bussiness Name: " + this.name 
-				+ " status " + this.isAvaiable() 
-				+ " hase owner " + this.owner.getName();
+				+ " bussiness type " + this.productType.getName() 
+				+ " hase owner " + this.owner.getName()
+				+ " at "+ this.address.getName();
 	};
 }

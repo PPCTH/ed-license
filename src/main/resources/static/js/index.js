@@ -1,11 +1,10 @@
 $(document).ready(function(){
 	const idSearchForm = $("#id-search-form");
 	const changeFormBtn = $(".btn-change-search");
-	//$.fn.dataTable.ext.classes.sPageButton = 'page-item paginate_button blue lighten-2 wave-effect';
 	
 	
-	idSearchForm.find("i").on("click", function(){
-		let value = idSearchForm.find("input").val();
+	idSearchForm.find(".card i").on("click", function(){
+		let value = idSearchForm.find(".card input").val();
 		let url = "search/" + value;
 		Pace.track(function(){
 			$.ajax({
@@ -16,7 +15,6 @@ $(document).ready(function(){
 				contentType: 'application/json',
 				success: function (res) {
 					renderResult(res);
-					//renderTable(res);
 	            },
 	            error: function (data, textStatus, xhr) {
 	                console.log(data.responseText);
@@ -56,7 +54,7 @@ function createCollection(title, list){
 				"</a>"
 		listEl += el;
 	})
-	let headerEl = "<li class='collection-header h3'>" + title + "</li>";
+	let headerEl = "<li class='collection-header blue darken-2 white-text'><h4>" + title + "</h4></li>";
 	let collectionEl = "<ul class='collection with-header'>" + headerEl + listEl + "</ul>";
 	
 	return collectionEl;	
@@ -114,9 +112,9 @@ function renderModal(data){
 
 function stickyHeaderSearch(el, elTop){
 	if(window.pageYOffset > elTop){
-		el.addClass("sticky")
+		el.find(".card").addClass("sticky")
 	}else{
-		el.removeClass("sticky")
+		el.find(".card").removeClass("sticky")
 	}
 		
 }

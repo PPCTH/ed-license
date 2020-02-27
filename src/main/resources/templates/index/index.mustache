@@ -1,47 +1,45 @@
 {{>layout/html-header}}
-<link rel="stylesheet" href="/css/index.css"> 
+<link rel="stylesheet" href="/css/index.css">
+
+<script type="text/javascript" src="http://api.nostramap.com/nostraapi/v2.0?key={{MAPAPIKEY}}"> </script> 
 <script src="/js/index.js"></script>
 <script src="/js/map-api.js"></script>
 
+
 <main role="main">
-
-<section id="search-wrp" class="container">
-	<div id="id-search-form" class="card">
-		<input type="text"/>
-		<i class="material-icons">search</i>
-	</div>
+	<nav class="nav-extended">
+		<div class="nav-wrapper blue">
+			<a href="#" class="brand-logo">ED</a>
+		</div>
+		<div class="nav-content">
+			<ul class="tabs tabs-fixed-width tabs-transparent blue darken-1">
+				<li class="tab"><a class="active" href="#id-search-form">ID</a></li>
+				<li class="tab"><a href="#map-search-form">MAP</a></li>
+			</ul>
+		</div>
+	</nav>
 	
-	<div id="map-search-form">
-		<div id="map-container"></div>	
-	</div>
-	<!--<form role="form" id="map-search-form">
+	<section id="search-wrp" class="container">
+		<div id="id-search-form">
+			<div class="card">
+				<input type="text"/>
+				<i class="material-icons">search</i>
+			</div>
+	
+			<section id="result-wrp"></section>
+	
+		</div>
+	
+		<div id="map-search-form">
+			<div id="map-container"></div>	
+		</div>
+	</section>	
 		
-		 <div class="form-row">
-			<div class="form-group col-sm">
-				<input type="text" class="form-control">
-			</div>
-			<div class="form-group col-sm">
-				<input type="text" class="form-control">
-			</div>
-			<div class="form-group col-sm">
-				<input type="text" class="form-control">
-			</div>
-		</div>		
-		<div class="form-row">
-			<div class="form-group col-sm-4">
-		 		<button type="button" class="btn-change-search btn btn-outline-primary btn-block">ID</button>
-		 	</div>
-		 	<div class="form-group col-sm-8">
-		 		<button type="submit" id="btn-submit-map-search" class="btn btn-primary btn-block">Search</button>
-	 		</div>
-		</div> 
- 	</form>-->
-</section>	
+	
 	
 
-<section id="result-wrp" class="container">	
-</section>
 
 {{>index/index-modal}}
 </main>
+
 {{>layout/html-footer}}

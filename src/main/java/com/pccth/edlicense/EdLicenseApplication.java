@@ -25,6 +25,7 @@ public class EdLicenseApplication {
 	@Bean
 	  public CommandLineRunner demo(OwnerRepository repo) {
 	    return (args) -> {
+			
 			/*
 			 * Owner owner1 = new Owner(); owner1.setName("TEST A"); Owner owner2 = new
 			 * Owner(); owner2.setName("TEST B");
@@ -41,11 +42,14 @@ public class EdLicenseApplication {
 			 * Bussiness buss4 = new Bussiness(); buss4.setName("BUSSINESS 4");
 			 * buss4.setOwner(owner2);
 			 */
+			 
 	    	
+			
 			
 			/*
 			 * repo.save(owner1); repo.save(owner2);
 			 */
+			 
 	     
 	    };
 	  }

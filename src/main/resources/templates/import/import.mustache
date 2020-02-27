@@ -1,0 +1,30 @@
+{{>layout/html-header}}
+<link rel="stylesheet" href="/css/import.css">
+
+<script src="/js/import.js"></script>
+
+<main  role="main">
+	<section id="file-form" class="container">
+		<div class="file-field input-field">
+			<div class="card file-path-wrapper">
+				<input id="file-inp" type="file">
+				<input class="file-path validate" type="text">
+				<i id="file-open" class="material-icons">insert_link</i>
+				<i id="file-submit" class="material-icons">file_upload</i>
+			</div>
+		</div>
+		
+	</section>
+	<section id="log-form" class="container">
+		<div id="log-wrp" class="z-depth-1">
+			<ul></ul>
+		</div>
+	</section>
+	
+
+
+
+{{>index/index-modal}}
+</main>
+
+{{>layout/html-footer}}

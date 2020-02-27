@@ -1,3 +1,7 @@
+.tabs{
+	overflow-x: hidden;
+}
+
 .table-responsive-sm::-webkit-scrollbar-track,
 #bussiness-info-wrp::-webkit-scrollbar-track
 {
@@ -75,4 +79,14 @@
   top: 0;
   left: 0;
   z-index: 999;
+}
+
+.sticky {
+	margin-left: 300px;
+}
+
+@media only screen and (max-width : 992px) {
+	.sticky {
+		margin-left: 0;
+	}
 }

@@ -20,4 +20,6 @@ public interface OwnerRepository extends JpaRepository<Owner, Long> {
 	@Query(value="select * from Owner o where o.name like %:keyword%",
 			nativeQuery=true)
 	Page<Owner> findOwnerByKeyWordName(@Param("keyword") String keyword, Pageable pageable);
+	
+	Owner findByLicenseId(String id);
 }
