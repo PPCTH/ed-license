@@ -31,7 +31,7 @@ public class BussinesssServiceImp implements BussinessService {
 				put("owner_name", temp.getOwner().getName());
 				put("bussiness_id", temp.getId());
 				put("bussiness_name", temp.getName());
-				put("bussiness_status", temp.getStatus());
+//				put("bussiness_status", temp.getStatus());
 			}};
 			
 		}).collect(Collectors.toList());

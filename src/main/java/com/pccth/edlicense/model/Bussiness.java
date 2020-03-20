@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -21,7 +22,6 @@ import lombok.Data;
 @Table(name = "bussiness",
 	uniqueConstraints = {
 		@UniqueConstraint(columnNames = "name"),
-		@UniqueConstraint(columnNames = "bussinessLicenseId")
 	}
 )
 @Data
@@ -29,22 +29,11 @@ public class Bussiness extends Audit{
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-	@NotNull
-    @Column(unique = true)
-	private String bussinessLicenseId;
 	
 	@NotNull
     @Column(unique = true)
 	private String name;
 	
-	/*
-	 * @NotNull private boolean status = false;
-	 */
-
-	private Date startLicenseDate;
-	
-	private Date endLicenseDate;
 	
 	@ManyToOne(
 			fetch = FetchType.LAZY, 
@@ -61,43 +50,25 @@ public class Bussiness extends Audit{
 	@JoinColumn(unique = true)
 	public Address address;
 	
-	@ManyToOne(
-			fetch = FetchType.LAZY, 
-			optional = false)
-    @JoinColumn(
-    		name = "product_type_id", 
-    		nullable = false)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	@NotNull
-	public ProductType productType;
-	
-	public Boolean isAvaiable() {
-		Date today = new Date();
-		return today.before(this.getEndLicenseDate());
-	}
-	public String getStatus() {
-		return this.isAvaiable()? "Aviable":"Expired"; 
-		
-	}
+	@OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            mappedBy = "bussiness")
+    private Set<License> license;
 	
 	
 	public Map getDetail() {
 		Map<String, Serializable> detail = new HashMap<>();
 		detail.put("owner_lincense_id", owner.getLicenseId());
 		detail.put("owner_name", owner.getName());
-		detail.put("bussiness_license_id", this.getBussinessLicenseId());
 		detail.put("bussiness_name", this.getName());
-		detail.put("product_type", productType.getName());
 		detail.put("address", address.getName());
-		detail.put("bussiness_license_start", this.getStartLicenseDate());
-		detail.put("bussiness_license_end", this.getEndLicenseDate());
+//		detail.put("license_id",license);
 		return detail;
 	}
 	
 	@Override
 	public String toString() {
 		return "Bussiness Name: " + this.name 
-				+ " bussiness type " + this.productType.getName() 
 				+ " hase owner " + this.owner.getName()
 				+ " at "+ this.address.getName();
 	};

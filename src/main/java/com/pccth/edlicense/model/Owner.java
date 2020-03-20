@@ -24,7 +24,7 @@ public class Owner extends Audit{
 	private String licenseId;
 	
 	@NotNull
-    @Column(unique = true)
+    @Column(unique = false)
 	private String name;
 
 	@OneToMany(cascade = CascadeType.ALL,
