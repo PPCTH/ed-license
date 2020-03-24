@@ -31,9 +31,4 @@ public class ProductType {
 	@NotNull
     @Column(unique = true)
 	private String name;
-	
-	@OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
-            mappedBy = "productType")
-    private Set<Bussiness> bussiness;
 }

@@ -1,31 +1,20 @@
 $(document).ready(function(){
-	const idSearchURL = "search";
 	const idSearchForm = $("#id-search-form");
 	const changeFormBtn = $(".btn-change-search");
-	$.fn.dataTable.ext.classes.sPageButton = 'page-item paginate_button blue lighten-2 wave-effect';
 	
-	/*Pace.on('hide', function(){
-	      console.log('done');
-	    });*/
 	
-	changeFormBtn.on("click",function() {
-		let current = $(this).parents(".tab-pane");
-		$(current).removeClass("active show")
-				.siblings().tab("show");
-	})
-	
-	idSearchForm.on("submit", function(){
-		let form = this;
-		let url = form.action + "/" + form.id.value;
+	idSearchForm.find(".card i").on("click", function(){
+		let value = idSearchForm.find(".card input").val();
+		let url = "search/" + value;
 		Pace.track(function(){
 			$.ajax({
 				url: url,
-				method: form.method,
+				method: 'POST',
 				async: true,
 				dataType : 'json',
 				contentType: 'application/json',
 				success: function (res) {
-					renderTable(res);
+					renderResult(res);
 	            },
 	            error: function (data, textStatus, xhr) {
 	                console.log(data.responseText);
@@ -35,79 +24,64 @@ $(document).ready(function(){
 		return false;
 	})
 	
-	
-	
+	const inpOffsetTop = idSearchForm.find("input").offset().top;
+	window.onscroll = function(){stickyHeaderSearch(idSearchForm, inpOffsetTop)};
 })
 
-function renderTable(data){
-	const table = $("#result-id-table");
-	const dataTable = table.DataTable({
-		dom: "<'table-responsive-sm'tp",
-		retrieve: true,
-		ordering: false,
-//		paging: false,
-		pagingType: "numbers", 
-		pageLength: 5,
-		column:[
-			{title: "Owner Name"},
-			{title: "Bussiness Name"},
-			{title: "Status"}
-		],
-	}).clear().rows.add(data.data).draw(true);
+function renderResult(data){
+	const resultContainer = $("#result-wrp");
+	resultContainer.empty();
 	
+	$.each(data, function(i, v){
+		resultContainer.append(createCollection(i, v))
+	})
 	
-	table.find("tbody").on("click","tr",function(){
-		var rowData = dataTable.row( this ).data();
-		renderSearchModal(rowData[rowData.length-1])
+	$(".detail").on("click", function(){
+		let el = $(this).find(".bussiness-address");
+		el.toggleClass("slide-in");
 	})
 }
 
-function renderSearchModal(bussiness_id){
-	const bussinessDetailUrl = "search/bussiness_detail/" + bussiness_id;
-	
-	Pace.track(function(){
-		$.ajax({
-			url: bussinessDetailUrl,
-			method: "GET",
-			async: true,
-			dataType : 'json',
-			contentType: 'application/json',
-			success: function (res) {
-				renderModal(res);
-            },
-            error: function (data, textStatus, xhr) {
-                console.log(data.responseText);
-            }
-		})
+function createCollection(title, list){
+	let listEl = "";
+	$.each(list['bussiness_list'], function(i, v){
+		let chip = v['bussiness_isAviable'] == "true"? 'light-green': 'red lighten-1';
+		let el = "<a href='#!' data-id='" + v['bussiness_id'] + "' class='waves-effect  collection-item detail'>" +
+					"<li>" + 
+						"<div class='bussiness-info'>" +
+							"<div class='row black-text'>" + 
+								"<div class='col s12 m9 l9'>" + v['bussiness_name'] + "</div>" + 
+								"<div class='col s12 m3 l3'>" + v['bussiness_id'] + "</div>" +
+							"</div>" + 
+							"<div class='row black-text mb-0'>" +
+								"<div class='valign-wrapper col s12 m5 l4 grey-text'><span class='material-icons'>category</span>" + v['bussiness_type'] + "</div>" +
+								"<div class='valign-wrapper col s12 m4 l4 grey-text'><span class='material-icons'>timelapse</span>" + "20-20-20 - 20-20-20" + "</div>" +
+								"<div class='valign-wrapper col s12 m3 l4'><span class='chip white-text " + chip + "'>" + v['bussiness_status']+ "</span></div>" +
+							"</div>" + 
+						"</div>" +
+						"<div class='bussiness-address black-text'><span class='material-icons grey-text'>keyboard_arrow_right</span>" +
+							"<p> ที่ตั้งสำนักงาน </p>" +
+							"<p>" + v['address'] + "</p>" +
+						"</div>" +
+					"</li>" +
+				"</a>"
+		listEl += el;
 	})
-
+	let headerEl = "<li class='collection-header blue darken-2 white-text'>" + 
+						"<h4>" + list['owner_name'] + "</h4>" + 
+						"<span class='grey-text text-lighten-4'>" + list['owner_id'] + "</span>" + 
+					"</li>";
+	let collectionEl = "<ul class='collection with-header'>" + headerEl + listEl + "</ul>";
+	
+	return collectionEl;	
 }
 
-function renderModal(data){
-	let now = new Date();
-	let endDate = new Date(data.bussiness_license_end);
-	let statusColor = now.getTime() < endDate.getTime()? "#00c853": "#d50000"
-	const animationCircle = $("#status-circle")
-	const modal = $("#bussiness-info-wrp").modal({
-		ready: function() { 
-			animationCircle.show().css("background-color",statusColor).addClass("open");
-	      },
-	      complete: function(){
-	    	animationCircle.removeClass("open");
-	      }
-	});
-	const content = $("#bussiness-info-wrp .modal-content");
 
-	$.each(data,function(i, v){
-		if(i == "bussiness_license_start" ||
-			i == "bussiness_license_end"){
-			let date = new Date(v)
-			v = date.toDateString()
-		}
-		content.find("." + i).html(v)
+function stickyHeaderSearch(el, elTop){
+	if(window.pageYOffset > elTop){
+		el.find(".card").addClass("sticky")
+	}else{
+		el.find(".card").removeClass("sticky")
+	}
 		
-		
-	})
-	
-	modal.modal("open");
 }
