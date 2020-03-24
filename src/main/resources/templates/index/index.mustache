@@ -1,20 +1,22 @@
 {{>layout/html-header}}
 <link rel="stylesheet" href="/css/index.css">
 
-<script type="text/javascript" src="http://api.nostramap.com/nostraapi/v2.0?key={{MAPAPIKEY}}"> </script> 
+<!-- <script type="text/javascript" src="http://api.nostramap.com/nostraapi/v2.0?key={{MAPAPIKEY}}"> </script>  -->
 <script src="/js/index.js"></script>
-<script src="/js/map-api.js"></script>
+<!-- <script src="/js/map-api.js"></script> -->
 
 
 <main role="main">
 	<nav class="nav-extended">
 		<div class="nav-wrapper blue">
-			<a href="#" class="brand-logo">ED</a>
+			<a href="#" class="brand-logo center">
+				<img src="images/logo.png" height="64" alt="LOGO" />
+			</a>
 		</div>
 		<div class="nav-content">
 			<ul class="tabs tabs-fixed-width tabs-transparent blue darken-1">
 				<li class="tab"><a class="active" href="#id-search-form">ID</a></li>
-				<li class="tab"><a href="#map-search-form">MAP</a></li>
+				<li class="tab disabled"><a href="#map-search-form">MAP</a></li>
 			</ul>
 		</div>
 	</nav>
@@ -35,11 +37,6 @@
 		</div>
 	</section>	
 		
-	
-	
-
-
-{{>index/index-modal}}
 </main>
 
 {{>layout/html-footer}}

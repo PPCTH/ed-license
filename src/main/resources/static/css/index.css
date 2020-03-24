@@ -90,3 +90,26 @@
 		margin-left: 0;
 	}
 }
+
+.bussiness-info .row .valign-wrapper+.valign-wrapper{
+	margin-top: 5px;
+}
+.bussiness-address{
+	height: -webkit-fill-available;
+    width: -webkit-fill-available;
+    position: absolute;
+    top: 0;
+    left: 1000px;
+    transition: 0.5s ease-in-out;
+    padding: 10px 20px 10px 30px;
+    background-color: white;
+}
+.bussiness-address>.material-icons{
+	position: absolute;
+	top: 45%;
+    left: 0;
+}
+.slide-in{
+	/* transition: 0.5s ease-in-out; */
+	transform: translatex(-1000px);
+}

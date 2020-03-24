@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -35,10 +36,12 @@ import org.springframework.web.multipart.MultipartFile;
 import com.google.gson.Gson;
 import com.pccth.edlicense.model.Address;
 import com.pccth.edlicense.model.Bussiness;
+import com.pccth.edlicense.model.License;
 import com.pccth.edlicense.model.Owner;
 import com.pccth.edlicense.model.ProductType;
 import com.pccth.edlicense.repository.AddressRepository;
 import com.pccth.edlicense.repository.BussinessRepository;
+import com.pccth.edlicense.repository.LicenseRepository;
 import com.pccth.edlicense.repository.OwnerRepository;
 import com.pccth.edlicense.repository.ProductTypeRepository;
 
@@ -77,24 +80,44 @@ public class MainController {
 
 		PageRequest page = PageRequest.of(pageParam, Integer.MAX_VALUE); //Integer.MAX_VALUE
 		
-		Page<Bussiness> pageBussiness = bussRepo.findBussinessByKeyWordSort(searchParam, page);
-		HashMap<String, List<Map>> owner = new HashMap<String, List<Map>>();
+		Page<Bussiness> pageBussiness = bussRepo.findByOwnerNameContaining(searchParam, page);
+		if(pageBussiness.isEmpty())
+			pageBussiness = bussRepo.findByOwnerId(Long.valueOf(searchParam), page);
 		
-		List<Bussiness> listBussiness = pageBussiness.getContent();
-		/*
-		 * for( Bussiness temp: listBussiness) { String ownerName =
-		 * temp.getOwner().getName(); Map<String, String> map = new HashMap<String,
-		 * String>() {{ put("bussiness_id",temp.getId().toString());
-		 * put("bussiness_name", temp.getName()); put("bussiness_status",
-		 * temp.getStatus()); put("bussiness_isAviable",temp.isAvaiable().toString());
-		 * }}; if(!owner.containsKey(ownerName)) { List<Map> list = new
-		 * ArrayList<Map>(){{ add(map); }}; owner.put(ownerName, list); }else {
-		 * owner.get(ownerName).add(map); } }
-		 */
-			
-		return ResponseEntity.status(HttpStatus.OK).body(new TreeMap(owner));
-	}
 	
+		List<Bussiness> listBussiness = pageBussiness.getContent();
+		
+		HashMap<String, Map<String, Serializable>> ownerList = new HashMap<String, Map<String, Serializable>>(); 
+		
+		for(Bussiness temp: listBussiness) {
+			List<License>licenseOfList = temp.getLicense();
+			HashMap<String, Serializable> owner = new HashMap<String, Serializable>(); 
+			List<Map<String, String>> bussList = new ArrayList<Map<String, String>>();
+			
+			for(License license: licenseOfList) {
+				HashMap<String, String> bussiness = new HashMap<String, String>();
+				
+				owner.put("owner_name",license.getBussiness().getOwner().getName());
+				owner.put("owner_id", license.getBussiness().getOwner().getLicenseId());
+				
+				bussiness.put("bussiness_id", license.getLicenseId());
+				bussiness.put("bussiness_name", license.getBussiness().getName());
+				bussiness.put("bussiness_start_license", license.getStartLicenseDate().toLocaleString());
+				bussiness.put("bussiness_end_license", license.getEndLicenseDate().toLocaleString());
+				bussiness.put("bussiness_isAviable", license.isAvaiable().toString());
+				bussiness.put("bussiness_status",license.isExpired());
+				bussiness.put("bussiness_type",license.getProductType().getName());
+				bussiness.put("address", license.getBussiness().getAddress().getName());
+				bussList.add(bussiness);
+				
+				owner.put("bussiness_list", (Serializable) bussList);
+				ownerList.put(license.getBussiness().getOwner().getLicenseId(), owner);
+			}
+			
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(new TreeMap(ownerList));
+	}
+
 	@GetMapping("/search/bussiness_detail/{id}")
 	@ResponseBody
 	public ResponseEntity<?> searchBussinessDetail(@PathVariable Long id){

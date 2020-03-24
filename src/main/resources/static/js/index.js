@@ -37,78 +37,45 @@ function renderResult(data){
 	})
 	
 	$(".detail").on("click", function(){
-		let bussinessId = $(this).data("id")
-		renderSearchModal(bussinessId)
+		let el = $(this).find(".bussiness-address");
+		el.toggleClass("slide-in");
 	})
 }
 
 function createCollection(title, list){
 	let listEl = "";
-	$.each(list,function(i, v){
-		let wave = v['bussiness_isAviable'] == "true"? 'waves-green': 'waves-red';
-		let el = "<a href='#!' data-id='" + v['bussiness_id'] + "' class='waves-effect " + wave + " collection-item detail'>" +
+	$.each(list['bussiness_list'], function(i, v){
+		let chip = v['bussiness_isAviable'] == "true"? 'light-green': 'red lighten-1';
+		let el = "<a href='#!' data-id='" + v['bussiness_id'] + "' class='waves-effect  collection-item detail'>" +
 					"<li>" + 
-						"<span class='title black-text'>" + v['bussiness_name'] + "</span>" + 
-						"<p class='grey-text mb-0'>" + v['bussiness_status'] + "</p>" +
+						"<div class='bussiness-info'>" +
+							"<div class='row black-text'>" + 
+								"<div class='col s12 m9 l9'>" + v['bussiness_name'] + "</div>" + 
+								"<div class='col s12 m3 l3'>" + v['bussiness_id'] + "</div>" +
+							"</div>" + 
+							"<div class='row black-text mb-0'>" +
+								"<div class='valign-wrapper col s12 m5 l4 grey-text'><span class='material-icons'>category</span>" + v['bussiness_type'] + "</div>" +
+								"<div class='valign-wrapper col s12 m4 l4 grey-text'><span class='material-icons'>timelapse</span>" + "20-20-20 - 20-20-20" + "</div>" +
+								"<div class='valign-wrapper col s12 m3 l4'><span class='chip white-text " + chip + "'>" + v['bussiness_status']+ "</span></div>" +
+							"</div>" + 
+						"</div>" +
+						"<div class='bussiness-address black-text'><span class='material-icons grey-text'>keyboard_arrow_right</span>" +
+							"<p> ที่ตั้งสำนักงาน </p>" +
+							"<p>" + v['address'] + "</p>" +
+						"</div>" +
 					"</li>" +
 				"</a>"
 		listEl += el;
 	})
-	let headerEl = "<li class='collection-header blue darken-2 white-text'><h4>" + title + "</h4></li>";
+	let headerEl = "<li class='collection-header blue darken-2 white-text'>" + 
+						"<h4>" + list['owner_name'] + "</h4>" + 
+						"<span class='grey-text text-lighten-4'>" + list['owner_id'] + "</span>" + 
+					"</li>";
 	let collectionEl = "<ul class='collection with-header'>" + headerEl + listEl + "</ul>";
 	
 	return collectionEl;	
 }
 
-function renderSearchModal(bussiness_id){
-	const bussinessDetailUrl = "search/bussiness_detail/" + bussiness_id;
-	
-	Pace.track(function(){
-		$.ajax({
-			url: bussinessDetailUrl,
-			method: "GET",
-			async: true,
-			dataType : 'json',
-			contentType: 'application/json',
-			success: function (res) {
-				renderModal(res);
-            },
-            error: function (data, textStatus, xhr) {
-                console.log(data.responseText);
-            }
-		})
-	})
-
-}
-
-function renderModal(data){
-	let now = new Date();
-	let endDate = new Date(data.bussiness_license_end);
-	let statusColor = now.getTime() < endDate.getTime()? "#00c853": "#d50000"
-	const animationCircle = $("#status-circle")
-	const modal = $("#bussiness-info-wrp").modal({
-		ready: function() { 
-			animationCircle.show().css("background-color",statusColor).addClass("open");
-	      },
-	      complete: function(){
-	    	animationCircle.removeClass("open");
-	      }
-	});
-	const content = $("#bussiness-info-wrp .modal-content");
-
-	$.each(data,function(i, v){
-		if(i == "bussiness_license_start" ||
-			i == "bussiness_license_end"){
-			let date = new Date(v)
-			v = date.toDateString()
-		}
-		content.find("." + i).html(v)
-		
-		
-	})
-	
-	modal.modal("open");
-}
 
 function stickyHeaderSearch(el, elTop){
 	if(window.pageYOffset > elTop){

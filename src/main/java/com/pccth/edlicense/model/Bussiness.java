@@ -3,6 +3,7 @@ package com.pccth.edlicense.model;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -53,7 +54,7 @@ public class Bussiness extends Audit{
 	@OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
             mappedBy = "bussiness")
-    private Set<License> license;
+    private List<License> license;
 	
 	
 	public Map getDetail() {
