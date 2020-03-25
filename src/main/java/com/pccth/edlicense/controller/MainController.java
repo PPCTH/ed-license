@@ -1,23 +1,12 @@
 package com.pccth.edlicense.controller;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,20 +17,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.google.gson.Gson;
-import com.pccth.edlicense.model.Address;
 import com.pccth.edlicense.model.Bussiness;
 import com.pccth.edlicense.model.License;
-import com.pccth.edlicense.model.Owner;
-import com.pccth.edlicense.model.ProductType;
 import com.pccth.edlicense.repository.AddressRepository;
 import com.pccth.edlicense.repository.BussinessRepository;
-import com.pccth.edlicense.repository.LicenseRepository;
 import com.pccth.edlicense.repository.OwnerRepository;
 import com.pccth.edlicense.repository.ProductTypeRepository;
 
@@ -80,9 +63,12 @@ public class MainController {
 
 		PageRequest page = PageRequest.of(pageParam, Integer.MAX_VALUE); //Integer.MAX_VALUE
 		
-		Page<Bussiness> pageBussiness = bussRepo.findByOwnerNameContaining(searchParam, page);
+		Page<Bussiness> pageBussiness = bussRepo.findByOwnerNameContaining((String) searchParam, page);
+		
+		System.out.println(pageBussiness.isEmpty());
+		
 		if(pageBussiness.isEmpty())
-			pageBussiness = bussRepo.findByOwnerId(Long.valueOf(searchParam), page);
+			pageBussiness = bussRepo.findByOwnerLicenseId(searchParam, page);
 		
 	
 		List<Bussiness> listBussiness = pageBussiness.getContent();

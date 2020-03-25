@@ -12,7 +12,7 @@ spring:
     properties:
       hibenate:
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
-    show-sql: false
+    show-sql: true
       
       
       

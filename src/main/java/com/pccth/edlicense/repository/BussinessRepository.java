@@ -15,7 +15,7 @@ import com.pccth.edlicense.model.Owner;
 public interface BussinessRepository extends JpaRepository<Bussiness, Long> {
 	
 	Page<Bussiness> findByOwnerId(Long ownerId, Pageable pageable );
-	Optional<Bussiness> findByIdAndOwnerId(Long id, Long ownerId);
+	Page<Bussiness> findByOwnerLicenseId(String ownerId, Pageable pageable);
 	
 	Page<Bussiness> findByOwnerNameContaining(String name, Pageable pageable);
 	
