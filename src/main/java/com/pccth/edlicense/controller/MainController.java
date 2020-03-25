@@ -47,6 +47,7 @@ public class MainController {
 		
 		model.addAttribute("title", "Welcome to ED License Trace");
 		model.addAttribute("MAPAPIKEY","GuVsoKRAt7o)xA1LSWniH)DlvEGcxykYY1r8jEYYFzXhEOaKXnEkIWVJYbkvnB1PXIwvsn3qO0JvTnbu0LSYoO0=====2");
+		model.addAttribute("inputPlaceHolder", "ค้นหาโดย ชื่อ หรือ เลขประจำตัวประชาชน ของผู้ประกอบการ");
 		return "index/index";
 	}
 	
@@ -64,8 +65,6 @@ public class MainController {
 		PageRequest page = PageRequest.of(pageParam, Integer.MAX_VALUE); //Integer.MAX_VALUE
 		
 		Page<Bussiness> pageBussiness = bussRepo.findByOwnerNameContaining((String) searchParam, page);
-		
-		System.out.println(pageBussiness.isEmpty());
 		
 		if(pageBussiness.isEmpty())
 			pageBussiness = bussRepo.findByOwnerLicenseId(searchParam, page);
