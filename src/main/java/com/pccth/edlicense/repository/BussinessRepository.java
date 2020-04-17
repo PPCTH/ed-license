@@ -14,12 +14,13 @@ import com.pccth.edlicense.model.Owner;
 @Repository
 public interface BussinessRepository extends JpaRepository<Bussiness, Long> {
 	
-	Page<Bussiness> findByOwnerId(Long ownerId, Pageable pageable );
+	Optional<Bussiness> findByOwnerId(Long ownerId);
+	Optional<Bussiness> findByNameAndOwnerId(String name, Long ownerId);
 	Page<Bussiness> findByOwnerLicenseId(String ownerId, Pageable pageable);
 	
 	Page<Bussiness> findByOwnerNameContaining(String name, Pageable pageable);
 	
-	Page<Bussiness> findBussinessByLicenseLicenseId(String id, Pageable pageable);
+	Optional<Bussiness> findBussinessByLicenseLicenseId(String id);
 	
 	@Query(value="select * from Bussiness b where b.name like %:keyword% or b.bussiness_license_id like %:keyword%",
 			nativeQuery=true)

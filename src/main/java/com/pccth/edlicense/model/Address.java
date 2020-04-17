@@ -20,12 +20,33 @@ public class Address {
     private Long id;
 	
 	@NotNull
-    @Column(unique = true)
-	private String name;
+	private String address;
+	
+
+	@NotNull
+	private String subDistrict;
+	
+	@NotNull
+	private String district;
+	
+	@NotNull
+	private String province;
+	
+	@NotNull
+	private String postCode;
 	
 	@OneToOne(mappedBy = "address")
 	private Bussiness bussiness;
 	
 	
+	@Override
+	public String toString() {
+		String address = this.getAddress() + " " + 
+						this.getSubDistrict() + " " + 
+						this.getDistrict() + " " + 
+						this.getProvince() + " " + 
+						this.getPostCode();
+		return address;
+	}
 	
 }
