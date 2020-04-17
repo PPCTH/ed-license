@@ -61,4 +61,11 @@ public class License extends Audit {
 		return this.isAvaiable()? "on License": "Expired";
 	}
 	 
+	@Override
+	public String toString() {
+		return "Owner name:" + this.getBussiness().getOwner().getName() +
+				" Bussiness name: " + this.getBussiness().getName() + 
+				" License ID: " + this.getLicenseId() + 
+				" License Type: " + this.getProductType().getName();
+	}
 }

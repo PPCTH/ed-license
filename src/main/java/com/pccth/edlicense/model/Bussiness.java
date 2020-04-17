@@ -20,11 +20,7 @@ import com.pccth.edlicense.model.audit.Audit;
 import lombok.Data;
 
 @Entity(name = "Bussiness")
-@Table(name = "bussiness",
-	uniqueConstraints = {
-		@UniqueConstraint(columnNames = "name"),
-	}
-)
+@Table(name = "bussiness")
 @Data
 public class Bussiness extends Audit{
 	@Id
@@ -32,7 +28,7 @@ public class Bussiness extends Audit{
     private Long id;
 	
 	@NotNull
-    @Column(unique = true)
+    @Column(unique = false)
 	private String name;
 	
 	
@@ -62,7 +58,7 @@ public class Bussiness extends Audit{
 		detail.put("owner_lincense_id", owner.getLicenseId());
 		detail.put("owner_name", owner.getName());
 		detail.put("bussiness_name", this.getName());
-		detail.put("address", address.getName());
+		detail.put("address", this.address.toString());
 //		detail.put("license_id",license);
 		return detail;
 	}
@@ -71,6 +67,6 @@ public class Bussiness extends Audit{
 	public String toString() {
 		return "Bussiness Name: " + this.name 
 				+ " hase owner " + this.owner.getName()
-				+ " at "+ this.address.getName();
+				+ " at "+ this.address.toString();
 	};
 }
