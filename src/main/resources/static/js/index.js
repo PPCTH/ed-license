@@ -32,20 +32,28 @@ function renderResult(data){
 	const resultContainer = $("#result-wrp");
 	resultContainer.empty();
 	
-	$.each(data, function(i, v){
-		resultContainer.append(createCollection(i, v))
-	})
+	if(!$.isEmptyObject(data)){
+		$.each(data, function(i, v){
+			resultContainer.append(createCollection(i, v))
+		})
+		
+		$(".detail").on("click", function(){
+			let el = $(this).find(".bussiness-address");
+			el.toggleClass("slide-in");
+		})
+	}else{
+		resultContainer.append("<div class='center'>ไม่พบข้อมูลผู้ประกอบการ</div>");
+	}
 	
-	$(".detail").on("click", function(){
-		let el = $(this).find(".bussiness-address");
-		el.toggleClass("slide-in");
-	})
 }
 
 function createCollection(title, list){
 	let listEl = "";
 	$.each(list['bussiness_list'], function(i, v){
+		
 		let chip = v['bussiness_isAviable'] == "true"? 'light-green': 'red lighten-1';
+		let startDate = v['bussiness_start_license'].split(',')[0];
+		let endDate = v['bussiness_end_license'].split(',')[0];
 		let el = "<a href='#!' data-id='" + v['bussiness_id'] + "' class='waves-effect  collection-item detail'>" +
 					"<li>" + 
 						"<div class='bussiness-info'>" +
@@ -54,9 +62,9 @@ function createCollection(title, list){
 								"<div class='col s12 m3 l3'>" + v['bussiness_id'] + "</div>" +
 							"</div>" + 
 							"<div class='row black-text mb-0'>" +
-								"<div class='valign-wrapper col s12 m5 l4 grey-text'><span class='material-icons'>category</span>" + v['bussiness_type'] + "</div>" +
-								"<div class='valign-wrapper col s12 m4 l4 grey-text'><span class='material-icons'>timelapse</span>" + "20-20-20 - 20-20-20" + "</div>" +
-								"<div class='valign-wrapper col s12 m3 l4'><span class='chip white-text " + chip + "'>" + v['bussiness_status']+ "</span></div>" +
+								"<div class='valign-wrapper col s12 m4 l5 grey-text'><span class='material-icons'>category</span>" + v['bussiness_type'] + "</div>" +
+								"<div class='valign-wrapper col s12 m5 l4 grey-text'><span class='material-icons'>timelapse</span>" + startDate + " - " + endDate + "</div>" +
+								"<div class='valign-wrapper col s12 m3 l3'><span class='chip white-text " + chip + "'>" + v['bussiness_status']+ "</span></div>" +
 							"</div>" + 
 						"</div>" +
 						"<div class='bussiness-address black-text'><span class='material-icons grey-text'>keyboard_arrow_right</span>" +

@@ -3,17 +3,13 @@ package com.pccth.edlicense.controller;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -28,7 +24,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -58,12 +53,15 @@ public class MainController {
 	ProductTypeRepository procTypeRepo;
 	@Autowired
 	AddressRepository addrRepo;
+	@Autowired
+	LicenseRepository lcRepo;
 	
 	@GetMapping("")
 	public String searchIndex(final Model model) {
 		
 		model.addAttribute("title", "Welcome to ED License Trace");
 		model.addAttribute("MAPAPIKEY","GuVsoKRAt7o)xA1LSWniH)DlvEGcxykYY1r8jEYYFzXhEOaKXnEkIWVJYbkvnB1PXIwvsn3qO0JvTnbu0LSYoO0=====2");
+		model.addAttribute("inputPlaceHolder", "ค้นหาโดย ชื่อ หรือ เลขประจำตัวประชาชน ของผู้ประกอบการ");
 		return "index/index";
 	}
 	
@@ -80,9 +78,10 @@ public class MainController {
 
 		PageRequest page = PageRequest.of(pageParam, Integer.MAX_VALUE); //Integer.MAX_VALUE
 		
-		Page<Bussiness> pageBussiness = bussRepo.findByOwnerNameContaining(searchParam, page);
+		Page<Bussiness> pageBussiness = bussRepo.findByOwnerNameContaining((String) searchParam, page);
+		
 		if(pageBussiness.isEmpty())
-			pageBussiness = bussRepo.findByOwnerId(Long.valueOf(searchParam), page);
+			pageBussiness = bussRepo.findByOwnerLicenseId(searchParam, page);
 		
 	
 		List<Bussiness> listBussiness = pageBussiness.getContent();
@@ -107,7 +106,7 @@ public class MainController {
 				bussiness.put("bussiness_isAviable", license.isAvaiable().toString());
 				bussiness.put("bussiness_status",license.isExpired());
 				bussiness.put("bussiness_type",license.getProductType().getName());
-				bussiness.put("address", license.getBussiness().getAddress().getName());
+				bussiness.put("address", license.getBussiness().getAddress().toString());
 				bussList.add(bussiness);
 				
 				owner.put("bussiness_list", (Serializable) bussList);
@@ -128,54 +127,94 @@ public class MainController {
 		        .body(gson.toJson(bussiness.getDetail()));
 	}
 	
-	/*
-	 * @PostMapping("/import/bussiness")
-	 * 
-	 * @ResponseBody public ResponseEntity<?>
-	 * importBussinessData(@RequestParam("file") MultipartFile uploadFile){
-	 * List<String> newBussListLog = new ArrayList<String>();
-	 * 
-	 * if(uploadFile.isEmpty()) return ResponseEntity.status(HttpStatus.OK)
-	 * .body("Please select a file!");
-	 * 
-	 * 
-	 * //List<Test> tempStudentList = new ArrayList<Test>(); XSSFWorkbook workbook;
-	 * try { workbook = new XSSFWorkbook(uploadFile.getInputStream()); XSSFSheet
-	 * worksheet = workbook.getSheetAt(0); for(int
-	 * i=1;i<worksheet.getPhysicalNumberOfRows() ;i++) { XSSFRow row =
-	 * worksheet.getRow(i); String ownerLCID = row.getCell(0).getRawValue(); //Owner
-	 * LCID Owner owner = ownerRepo.findByLicenseId(ownerLCID);
-	 * System.out.println("A"); Bussiness newBuss = new Bussiness();
-	 * newBuss.setOwner(owner);
-	 * newBuss.setBussinessLicenseId(row.getCell(1).getRawValue()); //Bussiness LCID
-	 * newBuss.setName(row.getCell(2).getStringCellValue()); //Bussiness Name
-	 * System.out.println("B");
-	 * 
-	 * Address newAddr = new Address();
-	 * newAddr.setName(row.getCell(3).getStringCellValue()); //Address
-	 * newBuss.setAddress(newAddr); System.out.println("C");
-	 * 
-	 * ProductType type =
-	 * procTypeRepo.findOneById(Long.valueOf(row.getCell(4).getRawValue()));
-	 * //Product Type newBuss.setProductType(type); System.out.println("D");
-	 * 
-	 * 
-	 * System.out.println("cell 5 " + row.getCell(5).getDateCellValue());
-	 * newBuss.setStartLicenseDate(row.getCell(5).getDateCellValue()); //Start
-	 * Bussinees LC Date System.out.println("E"); System.out.println("cell 6 " +
-	 * row.getCell(6).getDateCellValue());
-	 * newBuss.setEndLicenseDate(row.getCell(6).getDateCellValue()); //End Bussiness
-	 * LC Date System.out.println("F");
-	 * 
-	 * //Save All New addrRepo.save(newAddr); bussRepo.save(newBuss);
-	 * newBussListLog.add(newBuss.toString()); }
-	 * 
-	 * } catch (IOException e) { // TODO Auto-generated catch block
-	 * e.printStackTrace(); }
-	 * 
-	 * 
-	 * return ResponseEntity.status(HttpStatus.CREATED) .body(newBussListLog); }
-	 */
+	
+  @PostMapping("/import/bussiness")
+  @ResponseBody public ResponseEntity<?>
+  importBussinessData(@RequestParam("file") MultipartFile uploadFile){
+	  
+	  List<String> newBussListLog = new ArrayList<String>();
+	  if(uploadFile.isEmpty()) 
+		  return ResponseEntity.status(HttpStatus.OK).body("Please select a file!");
+	  
+	  XSSFWorkbook workbook;
+	  try { 
+		  workbook = new XSSFWorkbook(uploadFile.getInputStream()); 
+		  XSSFSheet worksheet = workbook.getSheetAt(0); 
+		  for(int i = 2; i < worksheet.getPhysicalNumberOfRows() ;i++) { //Start at row 2
+			  XSSFRow row = worksheet.getRow(i); 
+
+			  String ownerLCID = row.getCell(0).getRawValue(); //Owner License ID
+			  String ownerName = row.getCell(1).getStringCellValue(); //Owner Name
+			  Owner owner = ownerRepo.findByLicenseId(ownerLCID).orElseGet(() -> {
+				  Owner temp = new Owner();
+				  temp.setLicenseId(ownerLCID);
+				  temp.setName(ownerName);
+				  ownerRepo.save(temp); //New Owner Added
+				  return temp;
+			  });
+			  
+			  String col4 = row.getCell(4).getStringCellValue(); //Address
+			  String col5 = row.getCell(5).getStringCellValue(); //Sub-District
+			  String col6 = row.getCell(6).getStringCellValue(); //District
+			  String col7 = row.getCell(7).getStringCellValue(); //Province
+			  String col8 = String.valueOf((int) row.getCell(8).getNumericCellValue()); //Postcode
+			  
+			  Address address = addrRepo.findBussinessByAddressAndSubDistrictAndDistrictAndProvinceAndPostCode(
+					  			col4, col5, col6, col7, col8).orElseGet(() ->{
+					  				Address temp = new Address();
+					  				temp.setAddress(col4);
+					  				temp.setSubDistrict(col5);
+					  				temp.setDistrict(col6);
+					  				temp.setProvince(col7);
+					  				temp.setPostCode(col8);
+					  				addrRepo.save(temp);
+					  				return temp;
+					  			});
+
+			  String busLCID = row.getCell(2).getRawValue(); //Bussiness License ID
+			  String busName = row.getCell(3).getStringCellValue(); //Bussiness Name
+			  String productTypeName = row.getCell(9).getStringCellValue(); //Product Type
+			  Date startLCDate = row.getCell(10).getDateCellValue(); //Start License Date
+			  Date endLCDate = row.getCell(11).getDateCellValue(); //End License Date
+			  
+			  Bussiness buss = bussRepo.findByNameAndOwnerId(busName, owner.getId()).orElseGet(() ->{
+				  Bussiness temp = new Bussiness();
+				  temp.setName(busName);
+				  temp.setAddress(address);
+				  temp.setOwner(owner);
+				  bussRepo.save(temp); //Save New Bussiness
+				  return temp;
+			  });
+			  			  
+			  ProductType type = procTypeRepo.findByName(productTypeName).orElseGet(() -> {
+				  ProductType temp = new ProductType();
+				  temp.setName(productTypeName);
+				  procTypeRepo.save(temp);
+				  return temp;
+			  });
+			  
+			  License license = lcRepo.findByBussinessIdAndProductTypeName(buss.getId(), type.getName()).orElseGet(() ->{
+				
+				  License temp = new License();
+				  temp.setLicenseId(busLCID);
+				  temp.setProductType(type);
+				  temp.setStartLicenseDate(startLCDate);
+				  temp.setEndLicenseDate(endLCDate);
+				  temp.setBussiness(buss);
+				  lcRepo.save(temp); //Save New Bussiness License
+				  newBussListLog.add("Save new Bussiness License: \r\n" + temp);
+				  return temp;
+			  });
+			  
+			  
+		  }
+	  
+	  } catch (IOException e) {
+		  System.out.println(e);
+	  }
+	  
+	  return ResponseEntity.status(HttpStatus.CREATED) .body(newBussListLog); 
+  }
+	 
 	
 }
- 
