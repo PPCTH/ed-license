@@ -3,6 +3,7 @@
 
 <!-- <script type="text/javascript" src="http://api.nostramap.com/nostraapi/v2.0?key={{MAPAPIKEY}}"> </script>  -->
 <script src="/js/index.js"></script>
+<script src="/js/map-search.js"></script>
 <!-- <script src="/js/map-api.js"></script> -->
 
 
@@ -16,7 +17,7 @@
 		<div class="nav-content">
 			<ul class="tabs tabs-fixed-width tabs-transparent blue darken-1">
 				<li class="tab"><a class="active" href="#id-search-form">ID</a></li>
-				<li class="tab disabled"><a href="#map-search-form">MAP</a></li>
+				<li class="tab"><a href="#map-search-form">Address</a></li>
 			</ul>
 		</div>
 	</nav>
@@ -28,15 +29,31 @@
 				<i class="material-icons">search</i>
 			</div>
 	
-			<section id="result-wrp"></section>
-	
 		</div>
 	
 		<div id="map-search-form">
-			<div id="map-container"></div>	
+			<!-- <div id="map-container">
+			
+			</div>	 -->
+			
+			<div class="row">
+				
+				<select id="province" name="province" class="browser-default col s12 offset-m1 m3 z-depth-1">
+			    	<option value="" disabled selected>{{provincePlaceHolder}}</option>
+			    </select>
+				<select id="amphur" name="amphur" class="browser-default col s12 m3 z-depth-1">
+			    	<option value="" disabled selected>{{districtPlaceHolder}}</option>
+			    </select>
+				<select id="district" name="district" class="browser-default col s12 m3 z-depth-1">
+			    	<option value="" disabled selected>{{subDistrictPlaceHolder}}</option>
+			    </select>
+			    <div class="col s12 m1"><i class="material-icons">search</i></div>
+			</div>
+		
 		</div>
 	</section>	
-		
+	
+	<section id="result-wrp"></section>
 </main>
 
 {{>layout/html-footer}}

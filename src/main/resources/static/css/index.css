@@ -33,8 +33,9 @@
 	/* background-color: #000; */
 }
 
+
 #result-wrp{
-	/* width: 95%; */
+	width: 95%;
     margin: auto;
     margin-top: -6em;
 }
@@ -71,6 +72,13 @@
     top: 10px;
     right: 10px;
     cursor: pointer;
+}
+
+#map-search-form .material-icons{
+	position: relative;
+	top: 10px;
+	cursor: pointer;
+	float: right;
 }
 
 .sticky {
@@ -113,3 +121,6 @@
 	/* transition: 0.5s ease-in-out; */
 	transform: translatex(-1000px);
 }
+
+
+

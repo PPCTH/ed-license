@@ -18,17 +18,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.google.gson.Gson;
+import com.pccth.edlicense.data.SearchAddress;
+import com.pccth.edlicense.data.SearchId;
 import com.pccth.edlicense.model.Address;
 import com.pccth.edlicense.model.Bussiness;
 import com.pccth.edlicense.model.License;
@@ -39,7 +44,6 @@ import com.pccth.edlicense.repository.BussinessRepository;
 import com.pccth.edlicense.repository.LicenseRepository;
 import com.pccth.edlicense.repository.OwnerRepository;
 import com.pccth.edlicense.repository.ProductTypeRepository;
-
 
 @Controller
 public class MainController {
@@ -62,6 +66,10 @@ public class MainController {
 		model.addAttribute("title", "Welcome to ED License Trace");
 		model.addAttribute("MAPAPIKEY","GuVsoKRAt7o)xA1LSWniH)DlvEGcxykYY1r8jEYYFzXhEOaKXnEkIWVJYbkvnB1PXIwvsn3qO0JvTnbu0LSYoO0=====2");
 		model.addAttribute("inputPlaceHolder", "ค้นหาโดย ชื่อ หรือ เลขประจำตัวประชาชน ของผู้ประกอบการ");
+		model.addAttribute("subDistrictPlaceHolder","ตำบล");
+		model.addAttribute("districtPlaceHolder","อำเภอ");
+		model.addAttribute("provincePlaceHolder","จังหวัด");
+		
 		return "index/index";
 	}
 	
@@ -85,8 +93,26 @@ public class MainController {
 		
 	
 		List<Bussiness> listBussiness = pageBussiness.getContent();
+		HashMap<String, Map<String, Serializable>> ownerList  = getOwnerFromBussinessAsList(listBussiness);
 		
-		HashMap<String, Map<String, Serializable>> ownerList = new HashMap<String, Map<String, Serializable>>(); 
+		return ResponseEntity.status(HttpStatus.OK).body(new TreeMap(ownerList));
+	}
+	
+	@PostMapping(path = "/map-search", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseEntity<?> searchBussiness2(@RequestBody SearchAddress data, @RequestParam(name = "page", defaultValue  = "0") Integer pageParam){
+		
+		PageRequest page = PageRequest.of(pageParam, Integer.MAX_VALUE); //Integer.MAX_VALUE
+		
+		Page<Bussiness> pageBussiness = bussRepo.findByAddressProvinceAndAddressDistrictAndAddressSubDistrict(data.getProvince(), data.getAmphur(), data.getDistrict(), page);
+		List<Bussiness> listBussiness = pageBussiness.getContent();
+		HashMap<String, Map<String, Serializable>> ownerList  = getOwnerFromBussinessAsList(listBussiness);
+		
+		return ResponseEntity.status(HttpStatus.OK).body(new TreeMap(ownerList));
+	}
+	
+	public HashMap<String, Map<String, Serializable>> getOwnerFromBussinessAsList(List<Bussiness> listBussiness){
+		HashMap<String, Map<String, Serializable>> ownerList = new HashMap<String, Map<String, Serializable>>();
 		
 		for(Bussiness temp: listBussiness) {
 			List<License>licenseOfList = temp.getLicense();
@@ -114,9 +140,11 @@ public class MainController {
 			}
 			
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(new TreeMap(ownerList));
+		
+		return ownerList;
 	}
-
+	
+	
 	@GetMapping("/search/bussiness_detail/{id}")
 	@ResponseBody
 	public ResponseEntity<?> searchBussinessDetail(@PathVariable Long id){

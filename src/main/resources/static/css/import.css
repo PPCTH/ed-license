@@ -17,7 +17,7 @@
     right: 10px;
     cursor: pointer;
 }
-.card .material-icons:first-of-type{
+#file-form .card .material-icons:first-of-type{
 	margin-right: 50px;
 }
 

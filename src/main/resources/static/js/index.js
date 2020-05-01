@@ -1,6 +1,7 @@
 $(document).ready(function(){
 	const idSearchForm = $("#id-search-form");
 	const changeFormBtn = $(".btn-change-search");
+	const mapSearchForm = $("#map-search-form")
 	
 	
 	idSearchForm.find(".card i").on("click", function(){
@@ -23,6 +24,35 @@ $(document).ready(function(){
 		})
 		return false;
 	})
+	
+	
+	mapSearchForm.find(".material-icons").on("click",function(){
+		console.log("OK")
+		let url = "map-search/";
+		let data = {
+				province: $("#province option[value='" + $("#province").val() + "']").html(),
+				amphur: $("#amphur option[value='" + $("#amphur").val() + "']").html(),
+				district: $("#district option[value='" + $("#district").val() + "']").html()
+			}
+
+		Pace.track(function(){
+			$.ajax({
+				url: url,
+				method: "POST",
+				astnc: true,
+				contentType: 'application/json',
+				data: JSON.stringify(data),
+				success: function(res){
+					renderResult(res);
+				},
+				error: function(data, status, xhr){
+					console.log(data, status, xhr)
+					
+				}
+			})
+		})
+	})
+	
 	
 	const inpOffsetTop = idSearchForm.find("input").offset().top;
 	window.onscroll = function(){stickyHeaderSearch(idSearchForm, inpOffsetTop)};

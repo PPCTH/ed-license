@@ -19,8 +19,11 @@ public interface BussinessRepository extends JpaRepository<Bussiness, Long> {
 	Page<Bussiness> findByOwnerLicenseId(String ownerId, Pageable pageable);
 	
 	Page<Bussiness> findByOwnerNameContaining(String name, Pageable pageable);
+	Page<Bussiness> findByAddressProvinceAndAddressDistrictAndAddressSubDistrict(String p, String a, String d, Pageable pageable);
 	
 	Optional<Bussiness> findBussinessByLicenseLicenseId(String id);
+	
+	
 	
 	@Query(value="select * from Bussiness b where b.name like %:keyword% or b.bussiness_license_id like %:keyword%",
 			nativeQuery=true)
